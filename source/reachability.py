@@ -10,17 +10,46 @@
 from util.visualizer import *
 from util.util_functions import *
 import numpy as np
+import scipy.spatial
 
 
 class reachability(object):
     def __init__(self, **kwargs):
-        self.zonotype= {'c': np.matrix([[2], [3]]), 'g': np.matrix([[2, 2], [3, 4]])}
+        self.zonotype= {'c': [[2],
+                              [3]],
+                        'g': [[1, 0, 2.1],
+                              [0, 1, 1.4]]}
+
+    def add(self, a, b):
+        return a+b
+
+    def compute_zonoset(self):
+        x_vec = self.zonotype['c'][0]
+        y_vec = self.zonotype['c'][1]
+        for i in range(0, len(self.zonotype['g'][0])):
+            new_x = self.zonotype['g'][0][i]
+            new_y = self.zonotype['g'][1][i]
+            x_pos = [i + new_x for i in x_vec]
+            x_neg = [i - new_x for i in x_vec]
+            x_vec=x_pos+x_neg
+            y_pos = [i + new_y for i in y_vec]
+            y_neg = [i - new_y for i in y_vec]
+            y_vec = y_pos + y_neg
+        points = self.compute_convex_hull(x_vec, y_vec)
+        return [points[:, 0], points[:, 1]]
+
+    def compute_convex_hull(self, x_vec, y_vec):
+        v=np.transpose([x_vec, y_vec])
+        hull = scipy.spatial.ConvexHull(v)
+        return hull.points[hull.vertices]
+
 
 if __name__ == '__main__':
     obj_reach = reachability()
     obj_visual = visualizer()
     obj_visual.show_point(obj_reach.zonotype['c'])
-    zonoset=[[2, 3, 4, 3], [1, 4, 2, -2]]
+    zonoset=obj_reach.compute_zonoset()
+
     obj_visual.filled_polygon(zonoset)
 
     obj_visual.show()
