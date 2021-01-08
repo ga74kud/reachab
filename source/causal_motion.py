@@ -1,3 +1,12 @@
+# -------------------------------------------------------------
+# code developed by Michael Hartmann during his Ph.D.
+# Causal Inference and Motion Planning
+#
+# (C) 2020 Michael Hartmann, Graz, Austria
+# Released under GNU GENERAL PUBLIC LICENSE
+# email michael.hartmann@v2c2.at
+# -------------------------------------------------------------
+
 from util.visualizer import *
 from util.util_functions import *
 import numpy as np
@@ -24,8 +33,6 @@ class causal_motion(object):
         cov = self.prob["covariance"]  # diagonal covariance
         dif_x, dif_y = np.random.multivariate_normal(mean, cov, 1).T
         return (np.float(dif_x), np.float(dif_y))
-
-
 
 if __name__ == '__main__':
     obj_causal_A=causal_motion()

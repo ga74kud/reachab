@@ -1,4 +1,3 @@
-import matplotlib as mlt
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -15,6 +14,14 @@ class visualizer(object):
     def get_colormap(self, colmap):
         cmap = plt.get_cmap(colmap).colors
         return np.array(cmap)
+    def show_point(self, point):
+        plt.plot((point[0]), (point[1]), 'x', color='r')
+
+    def filled_polygon(self, zonoset):
+        x=zonoset[0]
+        y=zonoset[1]
+        plt.fill(x, y, facecolor='lightsalmon', edgecolor='orangered', linewidth=3)
+
     def show_traj(self, points):
         cmap = self.get_colormap("plasma")
         col_idx = np.floor(np.linspace(0, np.size(cmap, 0) - 1, np.size(points, 0)))
