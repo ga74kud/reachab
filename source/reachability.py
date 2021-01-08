@@ -19,9 +19,27 @@ class reachability(object):
                               [3]],
                         'g': [[1, 0, 2.1],
                               [0, 1, 1.4]]}
+        self.params={'T': 2, 'N': 10}
+        self.params['r']=self.params['T']/(self.params['N']+1)
+        self.system_dynamics()
 
-    def add(self, a, b):
-        return a+b
+
+
+
+    def system_dynamics(self):
+        self.A = np.matrix([[0, 0, 1, 0],
+                           [0, 0, 0, 1],
+                           [0, 0, 0, 0],
+                           [0, 0, 0, 0]])
+        self.B = np.matrix([[0, 0],
+                           [0, 0],
+                           [1, 0],
+                           [0, 1]])
+        self.Phi=np.exp(self.params['r']*self.A)
+    def multiplication_on_generator(self, mat):
+        return np.matrix(self.zonotype['c'])*mat
+
+
 
     def compute_zonoset(self):
         x_vec = self.zonotype['c'][0]
