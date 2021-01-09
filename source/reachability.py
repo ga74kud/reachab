@@ -71,6 +71,31 @@ class reachability(object):
         hull = scipy.spatial.ConvexHull(v)
         return hull.points[hull.vertices]
 
+    def minkowski_zonotypes(self, ZA, ZB):
+        Z={'c': None, 'g': None}
+        Z['c']=ZA['c']+ZB['c']
+        a=np.array(ZA['g'])
+        b=np.array(ZB['g'])
+        new_g=np.vstack((a, b))
+        Z['g'] = new_g
+        return Z
+    def square_zonotype(self, radius):
+        Z={'c': np.array([[0],
+                         [0],
+                         [0],
+                         [0]
+                        ]),
+           'g': None
+           }
+        b=[
+               np.array([[radius], [0], [0], [0]]),
+               np.array([[0], [radius], [0], [0]]),
+               np.array([[0], [0], [radius], [0]]),
+               np.array([[0], [0], [0], [radius]]),
+           ]
+        Z['g']=self.get_unique_vectors(b)
+        return Z
+
     def approximate_reachable_set(self):
         '''
         algorithm from: Girard, A.; "Reachability of Uncertain Linear Systems
@@ -91,7 +116,12 @@ class reachability(object):
         a = [0.5*(i+self.multiplication_on_generator(exp_r_norm_A, i)) for i in self.zonotype['g']]
         b = [0.5 * (i + self.multiplication_on_generator(exp_r_norm_A, i)) for i in self.zonotype['g']]
         P_0['g']=self.get_unique_vectors(a+b)
-        return P_0
+        # 5. step
+        rad=alpha_r+beta_r
+        square_Z=self.square_zonotype(rad)
+        Q_0=self.minkowski_zonotypes(P_0, square_Z)
+        R_0=Q_0
+        return R_0
 
 if __name__ == '__main__':
     obj_reach = reachability()
