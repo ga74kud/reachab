@@ -18,13 +18,14 @@ class reachability(object):
         self.zonotype= {'c':
                         np.array([[0],
                          [0],
-                         [0],
-                         [0]
+                         [1.6],
+                         [.7]
                         ]),
                         'g':
                         [
                             np.array([[1], [0], [0], [0]]),
-                            np.array([[0], [1], [0], [0]]),
+                            np.array([[.4], [1.3], [0], [0]]),
+                            np.array([[.1], [0.0], [0.3], [0]]),
                         ]}
         self.params={'T': 2.0,
                      'N': 4,
