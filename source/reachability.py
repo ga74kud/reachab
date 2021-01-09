@@ -27,7 +27,7 @@ class reachability(object):
                             np.array([[0], [1], [0], [0]]),
                         ]}
         self.params={'T': 2.0,
-                     'N': 10.0,
+                     'N': 4,
                      'gamma': 2.0 #threshold for control input constraint (inf-norm)
                      }
         self.params['r']=self.params['T']/(self.params['N']+1)
@@ -51,6 +51,22 @@ class reachability(object):
 
     def multiplication_on_generator(self, mat, list):
         return mat*np.matrix(list)
+    def convert_to_matrix(self, list):
+        erg=np.hstack((list[0], list[1]))
+        for i in range(2, len(list)):
+            erg=np.hstack((erg, list[i]))
+        return erg
+    def multiplication_on_zonotype(self, mat, zonotype):
+        Z = {'c': None, 'g': None}
+        Z['c']=mat*zonotype['c']
+        for i in range(0, np.size(zonotype['g'], 0)):
+            act_g=np.matrix(zonotype['g'][i,:])
+            if(i==0):
+                g=mat*np.transpose(act_g)
+            else:
+                g=np.hstack((g, mat*np.transpose(act_g)))
+        Z['g']=np.transpose(np.array(g))
+        return Z
 
     def get_unique_vectors(self, vec):
         unique_vec = np.squeeze(np.unique(vec, axis=0))
@@ -65,6 +81,7 @@ class reachability(object):
         unique_vec=self.get_unique_vectors(x_vec)
         points = self.compute_convex_hull(unique_vec[:, 0], unique_vec[:, 1])
         return [points[:, 0], points[:, 1]]
+
 
     def compute_convex_hull(self, x, y):
         v=np.transpose(np.vstack([x, y]))
@@ -106,6 +123,7 @@ class reachability(object):
         inf_norm_A=np.linalg.norm(self.A, np.inf)
         r_norm_A=self.params['r']*inf_norm_A
         exp_r_norm_A=np.exp(r_norm_A)
+        exp_r_A = np.exp(self.params['r']*self.A)
         # 2. step
         alpha_r=(exp_r_norm_A-1-r_norm_A)
         # 3. step
@@ -120,16 +138,29 @@ class reachability(object):
         rad=alpha_r+beta_r
         square_Z=self.square_zonotype(rad)
         Q_0=self.minkowski_zonotypes(P_0, square_Z)
-        R_0=Q_0
-        return R_0
+        # 6. step
+        all_R=[]
+        Q_i = Q_0
+        R_i=Q_0
+        all_R.append(R_i)
+        for i in range(1,self.params['N']-1):
+            # 7. step
+            P_i=self.multiplication_on_zonotype(exp_r_norm_A, Q_i)
+            # 8. step
+            square_Z = self.square_zonotype(beta_r)
+            Q_i = self.minkowski_zonotypes(P_i, square_Z)
+            # 9. step
+            all_R.append(Q_i)
+        return all_R
 
 if __name__ == '__main__':
     obj_reach = reachability()
     obj_visual = visualizer()
     obj_visual.show_point(obj_reach.zonotype['c'])
     zonoset_init=obj_reach.compute_zonoset(obj_reach.zonotype['c'], obj_reach.zonotype['g'])
-    P_0=obj_reach.approximate_reachable_set()
+    R=obj_reach.approximate_reachable_set()
     obj_visual.filled_polygon(zonoset_init, 'lightsalmon')
-    zonoset_P0 = obj_reach.compute_zonoset(P_0['c'], P_0['g'])
-    obj_visual.filled_polygon(zonoset_P0, 'green')
+    for act_zono in R:
+        zonoset_P0 = obj_reach.compute_zonoset(act_zono['c'], act_zono['g'])
+        obj_visual.filled_polygon(zonoset_P0, 'green')
     obj_visual.show()
