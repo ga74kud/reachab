@@ -11,13 +11,13 @@ from util.visualizer import *
 from util.util_functions import *
 import numpy as np
 import scipy.spatial
-
+from scipy import signal
 
 class reachability(object):
     def __init__(self, **kwargs):
 
-        self.params={'T': 2,
-                     'N': 4,
+        self.params={'T': 1.2,
+                     'N': 2,
                      'gamma': 0.01 #threshold for control input constraint (inf-norm)
                      }
         self.params['r']=self.params['T']/(self.params['N']+1)
@@ -27,15 +27,21 @@ class reachability(object):
 
 
     def system_dynamics(self):
-        self.A = np.matrix([[0, 0, 1, 0],
+        A = np.matrix([[0, 0, 1, 0],
                             [0, 0, 0, 1],
                             [0, 0, 0, 0],
                             [0, 0, 0, 0]])
-        self.B = np.matrix([[0, 0],
+        B = np.matrix([[0, 0],
                            [0, 0],
                            [1, 0],
                            [0, 1]])
-        self.Phi=np.exp(self.params['r']*self.A)
+        C = np.eye(4)
+        D=np.zeros((4, 2))
+        self.discrete_sys=signal.StateSpace(A, B, C, D, dt=self.params['r'])
+        self.A=np.array(self.discrete_sys.A)
+        self.B = np.array(self.discrete_sys.B)
+        prod_r_A=self.params['r']*self.A
+        self.Phi=np.exp(prod_r_A)
     def multiplication_on_center(self, mat):
         return mat*np.matrix(self.zonotype['c'])
 
@@ -63,8 +69,8 @@ class reachability(object):
         return unique_vec
     def compute_zonoset(self, c, g):
         x_vec = c
-        for wlt in g:
-            a=np.array(wlt)
+        for wlt in range(0, np.size(g,1)):
+            a=g[:, wlt]
             x_pos = [i+a for i in x_vec]
             x_neg = [i-a for i in x_vec]
             x_vec=x_pos+x_neg
@@ -83,7 +89,7 @@ class reachability(object):
         Z['c']=ZA['c']+ZB['c']
         a=ZA['g']
         b=ZB['g']
-        new_g=np.vstack((a, b))
+        new_g=np.hstack((a, b))
         Z['g'] = new_g
         return Z
     def square_zonotype(self, radius):
@@ -148,15 +154,15 @@ class reachability(object):
                              [0],
                              [0],
                                    ]),
-                   'g': np.matrix([[1, 0],
-                                   [0, 1],
+                   'g': np.matrix([[0, 0],
+                                   [0, 0],
                                    [0, 0],
                                    [0, 0]
                                    ])
                    }
         S_i=S_0
         # 4. step
-        for i in range(1, self.params['N'] - 1):
+        for i in range(0, self.params['N'] - 1):
             # 5. step
             X_i = self.multiplication_on_zonotype(self.Phi, X_i)
             # 6. step
