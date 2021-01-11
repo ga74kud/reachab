@@ -8,6 +8,7 @@ class visualizer(object):
     def line_between(self, a, b, col):
         plt.plot([a[0], b[0]], [a[1], b[1]], color=col, alpha=.5)
     def show(self):
+        plt.axis('equal')
         plt.grid("on")
         plt.show()
 

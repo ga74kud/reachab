@@ -15,21 +15,9 @@ import scipy.spatial
 
 class reachability(object):
     def __init__(self, **kwargs):
-        self.zonotype= {'c':
-                        np.array([[0],
-                         [0],
-                         [1.6],
-                         [.7],
-                         [.3]
-                        ]),
-                        'g':
-                        [
-                            np.array([[1], [0], [0], [0], [0]]),
-                            np.array([[.4], [1.3], [0], [0], [0]]),
-                            np.array([[.1], [0.0], [0.3], [0], [0]]),
-                        ]}
-        self.params={'T': 0.4,
-                     'N': 10,
+
+        self.params={'T': 2,
+                     'N': 4,
                      'gamma': 0.01 #threshold for control input constraint (inf-norm)
                      }
         self.params['r']=self.params['T']/(self.params['N']+1)
@@ -43,10 +31,10 @@ class reachability(object):
                             [0, 0, 0, 1],
                             [0, 0, 0, 0],
                             [0, 0, 0, 0]])
-        #self.B = np.matrix([[0, 0],
-        #                   [0, 0],
-        #                   [1, 0],
-        #                   [0, 1]])
+        self.B = np.matrix([[0, 0],
+                           [0, 0],
+                           [1, 0],
+                           [0, 1]])
         self.Phi=np.exp(self.params['r']*self.A)
     def multiplication_on_center(self, mat):
         return mat*np.matrix(self.zonotype['c'])
@@ -134,13 +122,14 @@ class reachability(object):
                              [0, 0]
                             ])
              }
+        all_R.append(Omega_0)
         U = {'c': np.matrix([[0],
                              [0],
                              [0],
                              [0],
                                    ]),
-                   'g': np.matrix([[.01, 0],
-                                   [0, .01],
+                   'g': np.matrix([[1, 0],
+                                   [0, 0],
                                    [0, 0],
                                    [0, 0]
                                    ])
@@ -230,14 +219,14 @@ class reachability(object):
 if __name__ == '__main__':
     obj_reach = reachability()
     obj_visual = visualizer()
-    obj_visual.show_point(obj_reach.zonotype['c'])
-    zonoset_init=obj_reach.compute_zonoset(obj_reach.zonotype['c'], obj_reach.zonotype['g'])
+    #obj_visual.show_point(obj_reach.zonotype['c'])
+    #zonoset_init=obj_reach.compute_zonoset(obj_reach.zonotype['c'], obj_reach.zonotype['g'])
     #R=obj_reach.approximate_reachable_set()
     R=obj_reach.approximate_reachable_set_v2()
-    obj_visual.filled_polygon(zonoset_init, 'lightsalmon')
+    #obj_visual.filled_polygon(zonoset_init, 'lightsalmon')
     for act_zono in R:
         zonoset_P0 = obj_reach.compute_zonoset(act_zono['c'], act_zono['g'])
         obj_visual.filled_polygon(zonoset_P0, 'green')
-    #traj=obj_reach.sampling_trajectory(np.matrix([[2],[2],[2], [2], [2]]))
-    #obj_visual.show_traj(traj)
+    traj=obj_reach.sampling_trajectory(np.matrix([[2],[2],[2], [2]]))
+    obj_visual.show_traj(traj)
     obj_visual.show()
