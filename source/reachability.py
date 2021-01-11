@@ -113,6 +113,7 @@ class reachability(object):
 
     def approximate_reachable_set_v2(self):
         all_R = []
+        all_X = []
         '''
         algorithm from: Girard, A.; "Efficient Computation of Reachable Sets of Linear Time-Invariant Systems with Inputs"
         '''
@@ -129,13 +130,14 @@ class reachability(object):
                             ])
              }
         all_R.append(Omega_0)
+        all_X.append(Omega_0)
         U = {'c': np.matrix([[0],
                              [0],
                              [0],
                              [0],
                                    ]),
                    'g': np.matrix([[1, 0],
-                                   [0, 0],
+                                   [0, 1],
                                    [0, 0],
                                    [0, 0]
                                    ])
@@ -165,6 +167,7 @@ class reachability(object):
         for i in range(0, self.params['N'] - 1):
             # 5. step
             X_i = self.multiplication_on_zonotype(self.Phi, X_i)
+            all_X.append(X_i)
             # 6. step
             S_i=self.minkowski_zonotypes(S_i, V_i)
             # 7. step
@@ -172,7 +175,7 @@ class reachability(object):
             # 8. step
             Omega_i=self.minkowski_zonotypes(S_i, V_i)
             all_R.append(Omega_i)
-        return all_R
+        return all_R, all_X
     def approximate_reachable_set(self):
         '''
         algorithm from: Girard, A.; "Reachability of Uncertain Linear Systems
@@ -228,11 +231,14 @@ if __name__ == '__main__':
     #obj_visual.show_point(obj_reach.zonotype['c'])
     #zonoset_init=obj_reach.compute_zonoset(obj_reach.zonotype['c'], obj_reach.zonotype['g'])
     #R=obj_reach.approximate_reachable_set()
-    R=obj_reach.approximate_reachable_set_v2()
+    R, X=obj_reach.approximate_reachable_set_v2()
     #obj_visual.filled_polygon(zonoset_init, 'lightsalmon')
     for act_zono in R:
         zonoset_P0 = obj_reach.compute_zonoset(act_zono['c'], act_zono['g'])
         obj_visual.filled_polygon(zonoset_P0, 'green')
+    for act_zono in X:
+        zonoset_P0 = obj_reach.compute_zonoset(act_zono['c'], act_zono['g'])
+        obj_visual.filled_polygon(zonoset_P0, 'orange')
     traj=obj_reach.sampling_trajectory(np.matrix([[2],[2],[2], [2]]))
     obj_visual.show_traj(traj)
     obj_visual.show()
