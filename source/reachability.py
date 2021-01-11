@@ -154,6 +154,15 @@ class reachability(object):
             all_R.append(Q_i)
         return all_R
 
+    def sampling_trajectory(self, x0):
+        xk=[]
+        xk.append(x0)
+        uk=np.matrix([[self.params['gamma']], [self.params['gamma']]])
+        for i in range(0, self.params['N']):
+            xnew=self.params['r']*(self.A*xk[-1]+self.B*uk)+xk[-1]
+            xk.append(xnew)
+        return xk
+
 if __name__ == '__main__':
     obj_reach = reachability()
     obj_visual = visualizer()
@@ -164,4 +173,5 @@ if __name__ == '__main__':
     for act_zono in R:
         zonoset_P0 = obj_reach.compute_zonoset(act_zono['c'], act_zono['g'])
         obj_visual.filled_polygon(zonoset_P0, 'green')
+    obj_reach.sampling_trajectory(np.matrix([[2],[2],[2], [2]]))
     obj_visual.show()
