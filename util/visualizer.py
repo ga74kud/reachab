@@ -21,7 +21,7 @@ class visualizer(object):
     def filled_polygon(self, zonoset, face_color):
         x=zonoset[0]
         y=zonoset[1]
-        plt.fill(x, y, facecolor=face_color, edgecolor='k', linewidth=3, alpha=.4)
+        plt.fill(x, y, facecolor=face_color, edgecolor='k', linewidth=3, alpha=.2)
 
     def show_traj(self, points):
         cmap = self.get_colormap("plasma")

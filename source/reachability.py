@@ -17,7 +17,7 @@ class reachability(object):
     def __init__(self, **kwargs):
 
         self.params={'T': 1.2,
-                     'N': 2,
+                     'N': 10,
                      'gamma': 0.01 #threshold for control input constraint (inf-norm)
                      }
         self.params['r']=self.params['T']/(self.params['N']+1)
@@ -40,8 +40,9 @@ class reachability(object):
         self.discrete_sys=signal.StateSpace(A, B, C, D, dt=self.params['r'])
         self.A=np.array(self.discrete_sys.A)
         self.B = np.array(self.discrete_sys.B)
-        prod_r_A=self.params['r']*self.A
-        self.Phi=np.exp(prod_r_A)
+        #see Otto Föllinger, "Regelungstechnik" and Thesis of Matthias Althoff:
+        self.Phi=np.eye(4)+self.params['r']*self.A+1/(2)*(A*self.params['r'])**2+1/(6)*(A*self.params['r'])**3+1/(24)*(A*self.params['r'])**4
+
     def multiplication_on_center(self, mat):
         return mat*np.matrix(self.zonotype['c'])
 
@@ -56,7 +57,7 @@ class reachability(object):
         Z = {'c': None, 'g': None}
         Z['c']=mat*zonotype['c']
         for i in range(0, np.size(zonotype['g'], 1)):
-            act_g=np.matrix(zonotype['g'][:,i])
+            act_g=zonotype['g'][:,i]
             if(i==0):
                 g=mat*act_g
             else:
@@ -68,7 +69,7 @@ class reachability(object):
         unique_vec = np.squeeze(np.unique(vec, axis=0))
         return unique_vec
     def compute_zonoset(self, c, g):
-        x_vec = c
+        x_vec = [c]
         for wlt in range(0, np.size(g,1)):
             a=g[:, wlt]
             x_pos = [i+a for i in x_vec]
@@ -123,8 +124,8 @@ class reachability(object):
                             [0],
                             [0]
                             ]),
-             'g': np.matrix([[1, 0],
-                             [0, 1],
+             'g': np.matrix([[1, -1],
+                             [1, 1],
                              [0, 0],
                              [0, 0]
                             ])
@@ -173,7 +174,7 @@ class reachability(object):
             # 7. step
             V_i = self.multiplication_on_zonotype(self.Phi, V_i)
             # 8. step
-            Omega_i=self.minkowski_zonotypes(S_i, V_i)
+            Omega_i=self.minkowski_zonotypes(X_i, S_i)
             all_R.append(Omega_i)
         return all_R, all_X
     def approximate_reachable_set(self):
@@ -238,7 +239,7 @@ if __name__ == '__main__':
         obj_visual.filled_polygon(zonoset_P0, 'green')
     for act_zono in X:
         zonoset_P0 = obj_reach.compute_zonoset(act_zono['c'], act_zono['g'])
-        obj_visual.filled_polygon(zonoset_P0, 'orange')
+        #obj_visual.filled_polygon(zonoset_P0, 'orange')
     traj=obj_reach.sampling_trajectory(np.matrix([[2],[2],[2], [2]]))
     obj_visual.show_traj(traj)
     obj_visual.show()
