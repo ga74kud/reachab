@@ -17,7 +17,7 @@ class reachability(object):
     def __init__(self, **kwargs):
 
         self.params={'T': 1.2,
-                     'N': 10,
+                     'N': 5,
                      'gamma': 0.01 #threshold for control input constraint (inf-norm)
                      }
         self.params['r']=self.params['T']/(self.params['N']+1)
@@ -124,10 +124,10 @@ class reachability(object):
                             [0],
                             [0]
                             ]),
-             'g': np.matrix([[1, -1],
-                             [1, 1],
-                             [0, 0],
-                             [0, 0]
+             'g': np.matrix([[1, -1, 1],
+                             [1, 1, .3],
+                             [0, 0, 0],
+                             [0, 0, 0]
                             ])
              }
         all_R.append(Omega_0)
@@ -137,10 +137,10 @@ class reachability(object):
                              [0],
                              [0],
                                    ]),
-                   'g': np.matrix([[1, 0],
-                                   [0, 1],
-                                   [0, 0],
-                                   [0, 0]
+                   'g': np.matrix([[1, 0, 1],
+                                   [1, 1, 0],
+                                   [0, 0, 0],
+                                   [0, 0, 0]
                                    ])
                    }
         #self.params['N']
