@@ -23,9 +23,6 @@ class reachability(object):
         self.params['r']=self.params['T']/(self.params['N']+1)
         self.system_dynamics()
 
-
-
-
     def system_dynamics(self):
         A = np.matrix([[0, 0, 1, 0],
                             [0, 0, 0, 1],
@@ -122,7 +119,7 @@ class reachability(object):
         Omega_0 = {'c': np.matrix([[0],
                             [0],
                             [0],
-                            [0]
+                            [-4]
                             ]),
              'g': np.matrix([[1, -1, 1],
                              [1, 1, .3],
@@ -166,15 +163,20 @@ class reachability(object):
         S_i=S_0
         # 4. step
         for i in range(0, self.params['N'] - 1):
+            print("cycle i: "+str(i))
             # 5. step
             X_i = self.multiplication_on_zonotype(self.Phi, X_i)
             all_X.append(X_i)
+            print("number of generators X_i: "+str(np.size(X_i['g'],1)))
             # 6. step
             S_i=self.minkowski_zonotypes(S_i, V_i)
+            print("number of generators S_i: "+str(np.size(S_i['g'],1)))
             # 7. step
             V_i = self.multiplication_on_zonotype(self.Phi, V_i)
+            print("number of generators V_i: "+str(np.size(V_i['g'],1)))
             # 8. step
             Omega_i=self.minkowski_zonotypes(X_i, S_i)
+            print("number of generators Omega_i: "+str(np.size(Omega_i['g'],1)))
             all_R.append(Omega_i)
         return all_R, all_X
     def approximate_reachable_set(self):
@@ -229,11 +231,7 @@ class reachability(object):
 if __name__ == '__main__':
     obj_reach = reachability()
     obj_visual = visualizer()
-    #obj_visual.show_point(obj_reach.zonotype['c'])
-    #zonoset_init=obj_reach.compute_zonoset(obj_reach.zonotype['c'], obj_reach.zonotype['g'])
-    #R=obj_reach.approximate_reachable_set()
     R, X=obj_reach.approximate_reachable_set_v2()
-    #obj_visual.filled_polygon(zonoset_init, 'lightsalmon')
     for act_zono in R:
         zonoset_P0 = obj_reach.compute_zonoset(act_zono['c'], act_zono['g'])
         obj_visual.filled_polygon(zonoset_P0, 'green')
