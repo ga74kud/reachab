@@ -117,7 +117,8 @@ class reachability(object):
     def get_box_hull(self, Omega):
         Z = {'c': None, 'g': None}
         r=self.get_points_of_zonotype(Omega)
-        q=np.diag([np.max(np.abs(r[0])), np.max(np.abs(r[0]))])
+        std=(((np.max(r[0])-np.min(r[0]))/2, (np.max(r[1])-np.min(r[1]))/2))
+        q=np.diag(std)
         Z['c']=Omega['c']
         Z['g'] = np.matrix(np.vstack((q,np.zeros((2,2)))))
         return Z
