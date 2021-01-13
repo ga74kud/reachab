@@ -1,2 +1,3 @@
-# cusamp
-Causal inference and motion planning
+# reachability
+Reachability with zonotypes
+
