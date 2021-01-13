@@ -65,7 +65,9 @@ class reachability(object):
     def get_unique_vectors(self, vec):
         unique_vec = np.squeeze(np.unique(vec, axis=0))
         return unique_vec
-    def compute_zonoset(self, c, g):
+    def get_points_of_zonotype(self, zonotype):
+        c=zonotype['c']
+        g=zonotype['g']
         x_vec = [c]
         for wlt in range(0, np.size(g,1)):
             a=g[:, wlt]
@@ -73,7 +75,10 @@ class reachability(object):
             x_neg = [i-a for i in x_vec]
             x_vec=x_pos+x_neg
         unique_vec=self.get_unique_vectors(x_vec)
-        points = self.compute_convex_hull(unique_vec[:, 0], unique_vec[:, 1])
+        try:
+            points = self.compute_convex_hull(unique_vec[:, 0], unique_vec[:, 1])
+        except:
+            None
         return [points[:, 0], points[:, 1]]
 
 
@@ -111,11 +116,10 @@ class reachability(object):
 
     def get_box_hull(self, Omega):
         Z = {'c': None, 'g': None}
-        mat=np.transpose(np.array(Omega['g']))
-        r=np.sum(mat, axis=0)
-        new_list=np.transpose(np.diag(r)).tolist()
+        r=self.get_points_of_zonotype(Omega)
+        q=np.diag([np.max(np.abs(r[0])), np.max(np.abs(r[0]))])
         Z['c']=Omega['c']
-        Z['g'] = np.transpose(np.matrix([i for i in new_list if(sum(np.abs(i))>0)]))
+        Z['g'] = np.matrix(np.vstack((q,np.zeros((2,2)))))
         return Z
     def approximate_reachable_set_without_box(self, Omega_0, U):
         all_R = []
@@ -299,10 +303,10 @@ if __name__ == '__main__':
     elif(program[1]==program[program_select]):
         R, X = obj_reach.approximate_reachable_set_with_box(Omega_0, U)
     for act_zono in R:
-        zonoset_P0 = obj_reach.compute_zonoset(act_zono['c'], act_zono['g'])
+        zonoset_P0 = obj_reach.get_points_of_zonotype(act_zono)
         obj_visual.filled_polygon(zonoset_P0, 'green')
     for act_zono in X:
-        zonoset_P0 = obj_reach.compute_zonoset(act_zono['c'], act_zono['g'])
+        zonoset_P0 = obj_reach.get_points_of_zonotype(act_zono)
         #obj_visual.filled_polygon(zonoset_P0, 'orange')
     traj=obj_reach.sampling_trajectory(np.matrix([[2],[2],[2], [2]]))
     obj_visual.show_traj(traj)
