@@ -263,14 +263,13 @@ class reachability(object):
             all_R.append(Q_i)
         return all_R
 
-    def sampling_trajectory(self, x0):
-        xk=x0
-        uk=np.matrix([[self.params['gamma']], [self.params['gamma']]])
-        for i in range(0, self.params['N']):
-            xnew=self.params['r']*(self.A*xk[:, -1]+self.B*uk)+xk[:, -1]
-            xk=np.append(xk, xnew, axis=1)
-        traj=[(xk[0,i], xk[1,i]) for i in range(np.size(xk, 1))]
-        return traj
+    def center_trajectory(self, R):
+        erg=[]
+        for i in range(0, len(R)):
+            x = np.float(R[i]['c'][0])
+            y = np.float(R[i]['c'][1])
+            erg.append((x,y))
+        return erg
 
 if __name__ == '__main__':
     Omega_0 = {'c': np.matrix([[0],
@@ -296,7 +295,7 @@ if __name__ == '__main__':
                          ])
          }
     program=['without_box', 'with_box']
-    program_select=1
+    program_select=0
     obj_reach = reachability()
     obj_visual = visualizer()
     if(program[0]==program[program_select]):
@@ -305,10 +304,10 @@ if __name__ == '__main__':
         R, X = obj_reach.approximate_reachable_set_with_box(Omega_0, U)
     for act_zono in R:
         zonoset_P0 = obj_reach.get_points_of_zonotype(act_zono)
-        obj_visual.filled_polygon(zonoset_P0, 'green')
+        obj_visual.filled_polygon(zonoset_P0, 'green',.2)
     for act_zono in X:
         zonoset_P0 = obj_reach.get_points_of_zonotype(act_zono)
-        #obj_visual.filled_polygon(zonoset_P0, 'orange')
-    traj=obj_reach.sampling_trajectory(np.matrix([[2],[2],[2], [2]]))
+        obj_visual.filled_polygon(zonoset_P0, 'orange')
+    traj=obj_reach.center_trajectory(R)
     obj_visual.show_traj(traj)
     obj_visual.show()
