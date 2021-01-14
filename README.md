@@ -1,5 +1,5 @@
 ![GitHub Logo](/images/pexels-free-creative-stuff-1193743.jpg)
-<span style="font-size:.5em;">  Image source: https://www.pexels.com/photo/photo-of-multicolored-abstract-painting-1193743/  </span> 
+
 
 # Reachability Analysis
 Reachability Analysis (RA) for hybrid systems:
@@ -38,8 +38,11 @@ Omega_0 = {'c': np.matrix([[0],
          }
 ```
 
-#Citation
+# Citation
 
 ```
 Hartmann, M.; Reachability Analysis in Python, 2021
 ```
+
+
+Image source: https://www.pexels.com/photo/photo-of-multicolored-abstract-painting-1193743/

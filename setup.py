@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='reachab',
-      version='0.1',
+      version='0.2',
       description='Reachability Analysis with zonotypes',
       url='https://github.com/ga74kud/reachab',
       author='Michael Hartmann',

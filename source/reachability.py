@@ -271,43 +271,46 @@ class reachability(object):
             erg.append((x,y))
         return erg
 
+    def test_function(self):
+        Omega_0 = {'c': np.matrix([[0],
+                                   [0],
+                                   [10],
+                                   [3]
+                                   ]),
+                   'g': np.matrix([[1, -1, 1, .2, .2],
+                                   [1, 1, .3, .2, .5],
+                                   [0, 0, 0, .4, .3],
+                                   [0, 0, 0, .2, .4]
+                                   ])
+                   }
+        U = {'c': np.matrix([[0],
+                             [0],
+                             [0],
+                             [0],
+                             ]),
+             'g': np.matrix([[1, 0, 1],
+                             [1, 1, 0],
+                             [0, 0, 0],
+                             [0, 0, 0]
+                             ])
+             }
+        program = ['without_box', 'with_box']
+        program_select = 0
+        obj_visual = visualizer()
+        if (program[0] == program[program_select]):
+            R, X = self.approximate_reachable_set_without_box(Omega_0, U)
+        elif (program[1] == program[program_select]):
+            R, X = self.approximate_reachable_set_with_box(Omega_0, U)
+        for act_zono in R:
+            zonoset_P0 = self.get_points_of_zonotype(act_zono)
+            obj_visual.filled_polygon(zonoset_P0, 'green', .2)
+        for act_zono in X:
+            zonoset_P0 = self.get_points_of_zonotype(act_zono)
+            obj_visual.filled_polygon(zonoset_P0, 'orange')
+        traj = self.center_trajectory(R)
+        obj_visual.show_traj(traj)
+        obj_visual.show()
+
 if __name__ == '__main__':
-    Omega_0 = {'c': np.matrix([[0],
-                               [0],
-                               [10],
-                               [0]
-                               ]),
-               'g': np.matrix([[1, -1, 1, .2, .2],
-                               [1, 1, .3, .2, .5],
-                               [0, 0, 0, .4, .3],
-                               [0, 0, 0, .2, .4]
-                               ])
-               }
-    U = {'c': np.matrix([[0],
-                         [0],
-                         [0],
-                         [0],
-                         ]),
-         'g': np.matrix([[1, 0, 1],
-                         [1, 1, 0],
-                         [0, 0, 0],
-                         [0, 0, 0]
-                         ])
-         }
-    program=['without_box', 'with_box']
-    program_select=0
     obj_reach = reachability()
-    obj_visual = visualizer()
-    if(program[0]==program[program_select]):
-        R, X=obj_reach.approximate_reachable_set_without_box(Omega_0, U)
-    elif(program[1]==program[program_select]):
-        R, X = obj_reach.approximate_reachable_set_with_box(Omega_0, U)
-    for act_zono in R:
-        zonoset_P0 = obj_reach.get_points_of_zonotype(act_zono)
-        obj_visual.filled_polygon(zonoset_P0, 'green',.2)
-    for act_zono in X:
-        zonoset_P0 = obj_reach.get_points_of_zonotype(act_zono)
-        obj_visual.filled_polygon(zonoset_P0, 'orange')
-    traj=obj_reach.center_trajectory(R)
-    obj_visual.show_traj(traj)
-    obj_visual.show()
+    obj_reach.test_function()
