@@ -1,17 +1,17 @@
 ![GitHub Logo](/images/pexels-free-creative-stuff-1193743.jpg)
-<span style="font-family:sans-serif; font-size:.09em;">  Image source: https://www.pexels.com/photo/photo-of-multicolored-abstract-painting-1193743/  </span> 
+<span style="font-size:.5em;">  Image source: https://www.pexels.com/photo/photo-of-multicolored-abstract-painting-1193743/  </span> 
 
 # Reachability Analysis
 Reachability Analysis (RA) for hybrid systems:
 
 - [x] RA with zonotypes
 
-#Installation
+# Installation
 ```bash
 pip install reachab
 ```
 
-#Usage
+# Usage
 
 ```python
 Omega_0 = {'c': np.matrix([[0],
