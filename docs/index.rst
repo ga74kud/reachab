@@ -6,6 +6,8 @@
 Welcome to reachab's documentation!
 ===================================
 
+Reachability Analysis of Hybrid Systems
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
