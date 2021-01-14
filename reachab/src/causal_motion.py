@@ -7,8 +7,8 @@
 # email michael.hartmann@v2c2.at
 # -------------------------------------------------------------
 
-from util.visualizer import *
-from util.util_functions import *
+from reachab.util.visualizer import *
+from reachab.util.util_functions import *
 import numpy as np
 
 

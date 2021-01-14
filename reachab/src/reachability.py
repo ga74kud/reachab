@@ -7,8 +7,7 @@
 # email michael.hartmann@v2c2.at
 # -------------------------------------------------------------
 
-from util.visualizer import *
-from util.util_functions import *
+from reachab.util.visualizer import *
 import numpy as np
 import scipy.spatial
 from scipy import signal
@@ -296,20 +295,20 @@ class reachability(object):
              }
         program = ['without_box', 'with_box']
         program_select = 0
-        obj_visual = visualizer()
+        self.obj_visual = visualizer()
         if (program[0] == program[program_select]):
             R, X = self.approximate_reachable_set_without_box(Omega_0, U)
         elif (program[1] == program[program_select]):
             R, X = self.approximate_reachable_set_with_box(Omega_0, U)
         for act_zono in R:
             zonoset_P0 = self.get_points_of_zonotype(act_zono)
-            obj_visual.filled_polygon(zonoset_P0, 'green', .2)
+            self.obj_visual.filled_polygon(zonoset_P0, 'green', .2)
         for act_zono in X:
             zonoset_P0 = self.get_points_of_zonotype(act_zono)
-            obj_visual.filled_polygon(zonoset_P0, 'orange')
+            self.obj_visual.filled_polygon(zonoset_P0, 'orange')
         traj = self.center_trajectory(R)
-        obj_visual.show_traj(traj)
-        obj_visual.show()
+        self.obj_visual.show_traj(traj)
+        self.obj_visual.show()
 
 if __name__ == '__main__':
     obj_reach = reachability()

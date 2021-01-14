@@ -1,4 +1,4 @@
-from source.reachability import *
+import reachab.src.reachability as rb
 def test_me():
-    obj_reachability = reachability()
+    obj_reachability = rb.reachability()
     obj_reachability.test_function()

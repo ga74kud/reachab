@@ -1,4 +1,4 @@
-![GitHub Logo](/images/pexels-free-creative-stuff-1193743.jpg)
+![](/images/pexels-free-creative-stuff-1193743.jpg)
 
 
 # Reachability Analysis
@@ -12,6 +12,22 @@ pip install reachab
 ```
 
 # Usage
+
+After installation with ```bash pip install ``` and running the script:
+```python
+import reachab
+
+def test_reachab():
+    reachab.test_me()
+
+if __name__ == '__main__':
+    test_reachab()
+```
+
+... should produce:
+
+![](/images/erg.png)
+
 
 ```python
 Omega_0 = {'c': np.matrix([[0],
@@ -38,10 +54,13 @@ Omega_0 = {'c': np.matrix([[0],
          }
 ```
 
+
+
+
 # Citation
 
 ```
-Hartmann, M.; Reachability Analysis in Python, 2021
+TODO
 ```
 
 
