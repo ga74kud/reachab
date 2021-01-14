@@ -1,6 +1,5 @@
 ![GitHub Logo](/images/pexels-free-creative-stuff-1193743.jpg)
-Image source: ![https://www.pexels.com/photo/photo-of-multicolored-abstract-painting-1193743/](url)
-
+Image source: https://www.pexels.com/photo/photo-of-multicolored-abstract-painting-1193743/
 
 # Reachability Analysis
 Reachability Analysis (RA) for hybrid systems:
