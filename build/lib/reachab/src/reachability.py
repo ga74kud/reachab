@@ -11,22 +11,16 @@ from reachab.util.visualizer import *
 import numpy as np
 import scipy.spatial
 from scipy import signal
-import logging
+
 class reachability(object):
     def __init__(self, **kwargs):
+
         self.params={'T': 2.2,
                      'N': 5,
                      'gamma': 0.01 #threshold for control input constraint (inf-norm)
                      }
-        self.obj_visual = visualizer()
         self.params['r']=self.params['T']/(self.params['N']+1)
-        self.sys={'A': None, 'B': None, 'C': None, 'D': None}
-        self.init_fcn()
-    def init_fcn(self):
         self.system_dynamics()
-
-    def start_logging(self):
-        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
     def system_dynamics(self):
         A = np.matrix([[0, 0, 1, 0],
@@ -40,13 +34,10 @@ class reachability(object):
         C = np.eye(4)
         D=np.zeros((4, 2))
         self.discrete_sys=signal.StateSpace(A, B, C, D, dt=self.params['r'])
-        self.sys['A']=np.array(self.discrete_sys.A)
-        self.sys['B'] = np.array(self.discrete_sys.B)
-        self.sys['C'] = np.array(self.discrete_sys.C)
-        self.sys['D'] = np.array(self.discrete_sys.D)
-
+        self.A=np.array(self.discrete_sys.A)
+        self.B = np.array(self.discrete_sys.B)
         #see Otto Föllinger, "Regelungstechnik" and Thesis of Matthias Althoff:
-        self.Phi=np.eye(4)+self.params['r']*self.sys['A']+1/(2)*(self.sys['A']*self.params['r'])**2+1/(6)*(self.sys['A']*self.params['r'])**3+1/(24)*(self.sys['A']*self.params['r'])**4
+        self.Phi=np.eye(4)+self.params['r']*self.A+1/(2)*(A*self.params['r'])**2+1/(6)*(A*self.params['r'])**3+1/(24)*(A*self.params['r'])**4
 
     def multiplication_on_center(self, mat):
         return mat*np.matrix(self.zonotype['c'])
@@ -139,8 +130,8 @@ class reachability(object):
         all_R.append(Omega_0)
         all_X.append(Omega_0)
         #self.params['N']
-        logging.info("number of generators Omega_0: " + str(np.size(Omega_0['g'], 1)))
-        logging.info("number of generators U: " + str(np.size(U['g'], 1)))
+        print("number of generators Omega_0: " + str(np.size(Omega_0['g'], 1)))
+        print("number of generators U: " + str(np.size(U['g'], 1)))
         # 1. step
         X_0=Omega_0
         X_i=X_0
@@ -160,23 +151,23 @@ class reachability(object):
                                    ])
                    }
         S_i=S_0
-        logging.info("number of generators S_0: " + str(np.size(S_0['g'], 1)))
+        print("number of generators S_0: " + str(np.size(S_0['g'], 1)))
         # 4. step
         for i in range(0, self.params['N'] - 1):
-            logging.info("cycle i: "+str(i))
+            print("cycle i: "+str(i))
             # 5. step
             X_i = self.multiplication_on_zonotype(self.Phi, X_i)
             all_X.append(X_i)
-            logging.info("number of generators X_i: "+str(np.size(X_i['g'],1)))
+            print("number of generators X_i: "+str(np.size(X_i['g'],1)))
             # 6. step
             S_i=self.minkowski_zonotypes(S_i, V_i)
-            logging.info("number of generators S_i: "+str(np.size(S_i['g'],1)))
+            print("number of generators S_i: "+str(np.size(S_i['g'],1)))
             # 7. step
             V_i = self.multiplication_on_zonotype(self.Phi, V_i)
-            logging.info("number of generators V_i: "+str(np.size(V_i['g'],1)))
+            print("number of generators V_i: "+str(np.size(V_i['g'],1)))
             # 8. step
             Omega_i=self.minkowski_zonotypes(X_i, S_i)
-            logging.info("number of generators Omega_i: "+str(np.size(Omega_i['g'],1)))
+            print("number of generators Omega_i: "+str(np.size(Omega_i['g'],1)))
             all_R.append(Omega_i)
         return all_R, all_X
     def approximate_reachable_set_with_box(self, Omega_0, U):
@@ -189,8 +180,8 @@ class reachability(object):
         all_X.append(Omega_0)
 
         #self.params['N']
-        logging.info("number of generators Omega_0: " + str(np.size(Omega_0['g'], 1)))
-        logging.info("number of generators U: " + str(np.size(U['g'], 1)))
+        print("number of generators Omega_0: " + str(np.size(Omega_0['g'], 1)))
+        print("number of generators U: " + str(np.size(U['g'], 1)))
         # 1. step
         X_0=Omega_0
         X_i=X_0
@@ -210,25 +201,25 @@ class reachability(object):
                                    ])
                    }
         S_i=S_0
-        logging.info("number of generators S_0: " + str(np.size(S_0['g'], 1)))
+        print("number of generators S_0: " + str(np.size(S_0['g'], 1)))
         # 4. step
         for i in range(0, self.params['N'] - 1):
-            logging.info("cycle i: "+str(i))
+            print("cycle i: "+str(i))
             # 5. step
             X_i = self.multiplication_on_zonotype(self.Phi, X_i)
             all_X.append(X_i)
-            logging.info("number of generators X_i: "+str(np.size(X_i['g'],1)))
+            print("number of generators X_i: "+str(np.size(X_i['g'],1)))
             # 6. step
             V_i_box = self.get_box_hull(V_i)
             S_i=self.minkowski_zonotypes(S_i, V_i_box)
-            logging.info("number of generators S_i: "+str(np.size(S_i['g'],1)))
+            print("number of generators S_i: "+str(np.size(S_i['g'],1)))
             # 7. step
             V_i = self.multiplication_on_zonotype(self.Phi, V_i)
-            logging.info("number of generators V_i: "+str(np.size(V_i['g'],1)))
+            print("number of generators V_i: "+str(np.size(V_i['g'],1)))
             # 8. step
             Omega_i=self.minkowski_zonotypes(X_i, S_i)
             Omega_i=self.get_box_hull(Omega_i)
-            logging.info("number of generators Omega_i: "+str(np.size(Omega_i['g'],1)))
+            print("number of generators Omega_i: "+str(np.size(Omega_i['g'],1)))
             all_R.append(Omega_i)
         return all_R, all_X
     def approximate_reachable_set(self):
@@ -304,6 +295,7 @@ class reachability(object):
              }
         program = ['without_box', 'with_box']
         program_select = 0
+        self.obj_visual = visualizer()
         if (program[0] == program[program_select]):
             R, X = self.approximate_reachable_set_without_box(Omega_0, U)
         elif (program[1] == program[program_select]):
@@ -320,5 +312,4 @@ class reachability(object):
 
 if __name__ == '__main__':
     obj_reach = reachability()
-    obj_reach.start_logging()
     obj_reach.test_function()

@@ -1,27 +1,17 @@
-import logging
 import reachab.src.reachability as rb
-
 def test_me():
     obj_reachability = rb.reachability()
     obj_reachability.test_function()
 
-def reach(Omega_0, U, params):
-
-    erg=[]
+def reach(Omega_0, U, program_select = 0):
     obj_reach = rb.reachability()
     program = ['without_box', 'with_box']
-    if (program[0] == params['box_function']):
+    if (program[0] == program[program_select]):
         R, X = obj_reach.approximate_reachable_set_without_box(Omega_0, U)
-    elif (program[1] == params['box_function']):
+    elif (program[1] == program[program_select]):
         R, X = obj_reach.approximate_reachable_set_with_box(Omega_0, U)
     for act_zono in R:
         zonoset = obj_reach.get_points_of_zonotype(act_zono)
-        if (params['visualization'] == 'y'):
-            logging.info("Visualization")
-            obj_reach.obj_visual.filled_polygon(zonoset, 'green', .2)
-        erg.append(zonoset)
-    if (params['visualization'] == 'y'):
-        obj_reach.obj_visual.show()
-    return erg
-
-
+    for act_zono in X:
+        zonoset = obj_reach.get_points_of_zonotype(act_zono)
+    return zonoset
