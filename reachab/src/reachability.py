@@ -12,33 +12,47 @@ import numpy as np
 import scipy.spatial
 from scipy import signal
 import logging
+
+"""
+    Class for reachability analysis
+"""
 class reachability(object):
     def __init__(self, **kwargs):
-        self.params={'T': 2.2,
-                     'N': 5,
+        self.params={'T': kwargs.get('T',2.2),
+                     'N': kwargs.get('N',4),
                      'gamma': 0.01 #threshold for control input constraint (inf-norm)
                      }
         self.obj_visual = visualizer()
         self.params['r']=self.params['T']/(self.params['N']+1)
         self.sys={'A': None, 'B': None, 'C': None, 'D': None}
         self.init_fcn()
-    def init_fcn(self):
-        self.system_dynamics()
 
+    """
+       Initial function to get system dynamics
+    """
+    def init_fcn(self):
+        A = np.matrix([[0, 0, 1, 0],
+                       [0, 0, 0, 1],
+                       [0, 0, 0, 0],
+                       [0, 0, 0, 0]])
+        B = np.matrix([[0, 0],
+                       [0, 0],
+                       [1, 0],
+                       [0, 1]])
+        C = np.eye(4)
+        D = np.zeros((4, 2))
+        self.system_dynamics(A, B, C, D)
+
+    """
+        Initial step to start logging
+    """
     def start_logging(self):
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-    def system_dynamics(self):
-        A = np.matrix([[0, 0, 1, 0],
-                            [0, 0, 0, 1],
-                            [0, 0, 0, 0],
-                            [0, 0, 0, 0]])
-        B = np.matrix([[0, 0],
-                           [0, 0],
-                           [1, 0],
-                           [0, 1]])
-        C = np.eye(4)
-        D=np.zeros((4, 2))
+    """
+        System dynamics
+    """
+    def system_dynamics(self, A, B, C, D):
         self.discrete_sys=signal.StateSpace(A, B, C, D, dt=self.params['r'])
         self.sys['A']=np.array(self.discrete_sys.A)
         self.sys['B'] = np.array(self.discrete_sys.B)
@@ -48,16 +62,30 @@ class reachability(object):
         #see Otto Föllinger, "Regelungstechnik" and Thesis of Matthias Althoff:
         self.Phi=np.eye(4)+self.params['r']*self.sys['A']+1/(2)*(self.sys['A']*self.params['r'])**2+1/(6)*(self.sys['A']*self.params['r'])**3+1/(24)*(self.sys['A']*self.params['r'])**4
 
+    """
+        Mulitplication with the center
+    """
     def multiplication_on_center(self, mat):
         return mat*np.matrix(self.zonotype['c'])
 
+    """
+        Multiplication with a generator list
+    """
     def multiplication_on_generator(self, mat, list):
         return mat*np.matrix(list)
+
+    """
+        Convert to Matrix
+    """
     def convert_to_matrix(self, list):
         erg=np.hstack((list[0], list[1]))
         for i in range(2, len(list)):
             erg=np.hstack((erg, list[i]))
         return erg
+
+    """
+        Mulitplication on a zonotype
+    """
     def multiplication_on_zonotype(self, mat, zonotype):
         Z = {'c': None, 'g': None}
         Z['c']=mat*zonotype['c']
@@ -70,9 +98,16 @@ class reachability(object):
         Z['g']=g
         return Z
 
+    """
+        Get unique vectors
+    """
     def get_unique_vectors(self, vec):
         unique_vec = np.squeeze(np.unique(vec, axis=0))
         return unique_vec
+
+    """
+        Get edge points of zonotype with convex hull operation
+    """
     def get_points_of_zonotype(self, zonotype):
         c=zonotype['c']
         g=zonotype['g']
@@ -89,12 +124,17 @@ class reachability(object):
             None
         return [points[:, 0], points[:, 1]]
 
-
+    """
+        Compute the convex hull
+    """
     def compute_convex_hull(self, x, y):
         v=np.transpose(np.vstack([x, y]))
         hull = scipy.spatial.ConvexHull(v)
         return hull.points[hull.vertices]
 
+    """
+        Minkowski sum with two zonotypes
+    """
     def minkowski_zonotypes(self, ZA, ZB):
         Z={'c': None, 'g': None}
         Z['c']=ZA['c']+ZB['c']
@@ -103,25 +143,29 @@ class reachability(object):
         new_g=np.hstack((a, b))
         Z['g'] = new_g
         return Z
-    def square_zonotype(self, radius):
-        Z={'c': np.array([[0],
-                         [0],
-                         [0],
-                         [0],
-                        [0]
-                        ]),
-           'g': None
-           }
-        b=[
-               np.array([[radius], [0], [0], [0], [0]]),
-               np.array([[0], [radius], [0], [0], [0]]),
-               np.array([[0], [0], [radius], [0], [0]]),
-               np.array([[0], [0], [0], [radius], [0]]),
-               np.array([[0], [0], [0], [0], [radius]]),
-           ]
-        Z['g']=self.get_unique_vectors(b)
-        return Z
 
+    # def square_zonotype(self, radius):
+    #     Z={'c': np.array([[0],
+    #                      [0],
+    #                      [0],
+    #                      [0],
+    #                     [0]
+    #                     ]),
+    #        'g': None
+    #        }
+    #     b=[
+    #            np.array([[radius], [0], [0], [0], [0]]),
+    #            np.array([[0], [radius], [0], [0], [0]]),
+    #            np.array([[0], [0], [radius], [0], [0]]),
+    #            np.array([[0], [0], [0], [radius], [0]]),
+    #            np.array([[0], [0], [0], [0], [radius]]),
+    #        ]
+    #     Z['g']=self.get_unique_vectors(b)
+    #     return Z
+
+    """
+        Get Box Hull
+    """
     def get_box_hull(self, Omega):
         Z = {'c': None, 'g': None}
         r=self.get_points_of_zonotype(Omega)
@@ -130,11 +174,18 @@ class reachability(object):
         Z['c']=Omega['c']
         Z['g'] = np.matrix(np.vstack((q,np.zeros((2,2)))))
         return Z
+
+    """
+        Approximation of Reachability analysis:
+        based on algorithm 1 from: Girard, A.; "Efficient Computation of Reachable Sets of Linear Time-Invariant Systems 
+        with Inputs"
+    """
     def approximate_reachable_set_without_box(self, Omega_0, U):
         all_R = []
         all_X = []
         '''
-        algorithm 1 from: Girard, A.; "Efficient Computation of Reachable Sets of Linear Time-Invariant Systems with Inputs"
+        algorithm 1 from: Girard, A.; "Efficient Computation of Reachable Sets of Linear Time-Invariant Systems with 
+        Inputs"
         '''
         all_R.append(Omega_0)
         all_X.append(Omega_0)
@@ -179,11 +230,18 @@ class reachability(object):
             logging.info("number of generators Omega_i: "+str(np.size(Omega_i['g'],1)))
             all_R.append(Omega_i)
         return all_R, all_X
+
+    """
+            Approximation of Reachability analysis:
+            based on algorithm 2 from: Girard, A.; "Efficient Computation of Reachable Sets of Linear Time-Invariant 
+            Systems with Inputs"
+    """
     def approximate_reachable_set_with_box(self, Omega_0, U):
         all_R = []
         all_X = []
         '''
-        algorithm 2 from: Girard, A.; "Efficient Computation of Reachable Sets of Linear Time-Invariant Systems with Inputs"
+        algorithm 2 from: Girard, A.; "Efficient Computation of Reachable Sets of Linear Time-Invariant Systems with 
+        Inputs"
         '''
         all_R.append(Omega_0)
         all_X.append(Omega_0)
@@ -231,6 +289,12 @@ class reachability(object):
             logging.info("number of generators Omega_i: "+str(np.size(Omega_i['g'],1)))
             all_R.append(Omega_i)
         return all_R, all_X
+
+    """
+        Approximation of Reachability analysis:
+        based on algorithm from: Girard, A.; "Reachability of Uncertain Linear Systems
+        Using Zonotopes"
+    """
     def approximate_reachable_set(self):
         '''
         algorithm from: Girard, A.; "Reachability of Uncertain Linear Systems
@@ -271,6 +335,9 @@ class reachability(object):
             all_R.append(Q_i)
         return all_R
 
+    """
+        Center trajectory
+    """
     def center_trajectory(self, R):
         erg=[]
         for i in range(0, len(R)):
@@ -279,6 +346,9 @@ class reachability(object):
             erg.append((x,y))
         return erg
 
+    """
+        Test function
+    """
     def test_function(self):
         Omega_0 = {'c': np.matrix([[0],
                                    [0],
@@ -319,6 +389,6 @@ class reachability(object):
         self.obj_visual.show()
 
 if __name__ == '__main__':
-    obj_reach = reachability()
+    obj_reach = reachability(**{'T':3, 'N':5})
     obj_reach.start_logging()
     obj_reach.test_function()

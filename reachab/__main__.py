@@ -1,5 +1,12 @@
+# -------------------------------------------------------------
+# code developed by Michael Hartmann during his Ph.D.
+# Reachability Analysis
+#
+# (C) 2020 Michael Hartmann, Graz, Austria
+# Released under GNU GENERAL PUBLIC LICENSE
+# email michael.hartmann@v2c2.at
+# -------------------------------------------------------------
 from __init__ import *
-
 import numpy as np
 import argparse
 import logging
@@ -36,12 +43,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--box_function', '-box', type=str, help='choices: without_box, with_box',
                         default='without_box', required=False)
-    parser.add_argument('--visualization', '-vis', type=str, help='y, n',
+    parser.add_argument('--visualization', '-vis', type=str, help='(y,n)',
                         default='n', required=False)
+    parser.add_argument('--time_horizon', '-T', type=float, help='value like: T=2.2', required=True)
+    parser.add_argument('--steps', '-N', type=int, help='value like N=4', required=True)
+    parser.add_argument('--debug', '-deb', type=str, help='(y,n)', default='n', required=False)
     args = parser.parse_args()
     params = vars(args)
+    if(params['debug']=='y'):
+        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     run_it(params)
 if __name__ == '__main__':
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     main()
 

@@ -1,4 +1,11 @@
-import logging
+# -------------------------------------------------------------
+# code developed by Michael Hartmann during his Ph.D.
+# Reachability Analysis
+#
+# (C) 2020 Michael Hartmann, Graz, Austria
+# Released under GNU GENERAL PUBLIC LICENSE
+# email michael.hartmann@v2c2.at
+# -------------------------------------------------------------
 import reachab.src.reachability as rb
 
 def test_me():
@@ -6,9 +13,15 @@ def test_me():
     obj_reachability.test_function()
 
 def reach(Omega_0, U, params):
-
+    ##################################
+    ## REACHABILITY ANALYSIS PARAMS ##
+    ##################################
+    ra_params = {
+        'T': params['time_horizon'],
+        'N': params['steps'],
+    }
     erg=[]
-    obj_reach = rb.reachability()
+    obj_reach = rb.reachability(**ra_params)
     program = ['without_box', 'with_box']
     if (program[0] == params['box_function']):
         R, X = obj_reach.approximate_reachable_set_without_box(Omega_0, U)
@@ -17,8 +30,7 @@ def reach(Omega_0, U, params):
     for act_zono in R:
         zonoset = obj_reach.get_points_of_zonotype(act_zono)
         if (params['visualization'] == 'y'):
-            logging.info("Visualization")
-            obj_reach.obj_visual.filled_polygon(zonoset, 'green', .2)
+            obj_reach.obj_visual.filled_polygon(zonoset, 'orange', .2)
         erg.append(zonoset)
     if (params['visualization'] == 'y'):
         obj_reach.obj_visual.show()
