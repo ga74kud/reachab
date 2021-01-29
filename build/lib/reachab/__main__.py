@@ -49,7 +49,7 @@ def main():
     parser.add_argument('--time_horizon', '-T', type=float, help='value like: T=2.2', required=True)
     parser.add_argument('--steps', '-N', type=int, help='value like N=4', required=True)
     parser.add_argument('--debug', '-deb', type=str, help='(y,n)', default='n', required=False)
-    parser.add_argument('--face_color', '-facol', type=str, help='name: orange, green or values', default='cyan', required=False)
+    parser.add_argument('--face_color', '-facol', type=str, help='name: orange, green or values', default='orange', required=False)
     args = parser.parse_args()
     params = vars(args)
     if(params['debug']=='y'):
