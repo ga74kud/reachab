@@ -66,7 +66,7 @@ parser = argparse.ArgumentParser()
 
 ... should produce:
 
-![](/images/erg.png)
+![](/images/reachability.png)
 
 
 ```python
