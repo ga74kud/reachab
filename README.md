@@ -16,7 +16,7 @@ pip install reachab
 After installation with ```bash pip install reachab```, you could test the installation with ```reachab.test_me``` 
 or running the script:
 ```python
-parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument('--box_function', '-box', type=str, help='choices: without_box, with_box',
                         default='without_box', required=False)
     parser.add_argument('--visualization', '-vis', type=str, help='y, n',
