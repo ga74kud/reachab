@@ -11,7 +11,8 @@ import numpy as np
 import argparse
 import logging
 def run_it(params):
-    for wlt in range(0, 4):
+    #test_me()
+    for wlt in range(0, 1):
         Omega_0 = {'c': np.matrix([[wlt*80],
                                [0],
                                [10],

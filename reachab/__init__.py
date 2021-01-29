@@ -8,10 +8,19 @@
 # -------------------------------------------------------------
 import reachab.src.reachability as rb
 import matplotlib.pyplot as plt
+'''
+    Test me function. A user should see if the program is installed and a simple plot is available 
+'''
 def test_me():
     obj_reachability = rb.reachability()
     obj_reachability.test_function()
 
+'''
+    Reachability Analysis. 
+    Omega_0: Initial state set
+    U: Fixed control input set
+    Params: Parameters
+'''
 def reach(Omega_0, U, params):
     ##################################
     ## REACHABILITY ANALYSIS PARAMS ##
@@ -34,7 +43,9 @@ def reach(Omega_0, U, params):
         erg.append(zonoset)
     return erg
 
-
+'''
+    Show the plots
+'''
 def show_all():
     plt.axis('equal')
     plt.grid("on")

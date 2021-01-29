@@ -62,6 +62,7 @@ parser = argparse.ArgumentParser()
                          ])
          }
     zonoset=reachab.reach(Omega_0, U, params)
+    show_all()
 ```
 
 ... should produce:
