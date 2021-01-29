@@ -74,7 +74,14 @@ parser = argparse.ArgumentParser()
 
 Please cite following document if you use this python package:
 ```
-TODO
+@inproceedings{hartmann2019optimal,
+  title={Optimal motion planning with reachable sets of vulnerable road users},
+  author={Hartmann, Michael and Watzenig, Daniel},
+  booktitle={2019 IEEE Intelligent Vehicles Symposium (IV)},
+  pages={891--898},
+  year={2019},
+  organization={IEEE}
+}
 ```
 
 
