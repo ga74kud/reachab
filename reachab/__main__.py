@@ -35,7 +35,9 @@ def run_it(params):
                          [0, 0, 0]
                          ])
          }
-        zonoset=reach(Omega_0, U, params)
+        # zonoset=reach(Omega_0, U, params)
+        R, X, obj_reach, zonoset=reach_zonotype_without_box(Omega_0, U, **{"time_horizon": 2.2, "steps": 4, "visualization": "y", "face_color": "green"})
+        all_inside_points=get_sample_points_inside_hull(zonoset)
         logging.info("Numbers in num_list are: {}".format(' '.join(map(str, zonoset))))
     show_all()
 
@@ -51,6 +53,10 @@ def main():
     parser.add_argument('--steps', '-N', type=int, help='value like N=4', required=True)
     parser.add_argument('--debug', '-deb', type=str, help='(y,n)', default='n', required=False)
     parser.add_argument('--face_color', '-facol', type=str, help='name: orange, green or values', default='cyan', required=False)
+    parser.add_argument('--nx', '-nx', type=int, help='nx for meshgrid (integer)', default=6,
+                        required=False)
+    parser.add_argument('--ny', '-ny', type=int, help='ny for meshgrid (integer)', default=6,
+                        required=False)
     args = parser.parse_args()
     params = vars(args)
     if(params['debug']=='y'):

@@ -144,24 +144,6 @@ class reachability(object):
         Z['g'] = new_g
         return Z
 
-    # def square_zonotype(self, radius):
-    #     Z={'c': np.array([[0],
-    #                      [0],
-    #                      [0],
-    #                      [0],
-    #                     [0]
-    #                     ]),
-    #        'g': None
-    #        }
-    #     b=[
-    #            np.array([[radius], [0], [0], [0], [0]]),
-    #            np.array([[0], [radius], [0], [0], [0]]),
-    #            np.array([[0], [0], [radius], [0], [0]]),
-    #            np.array([[0], [0], [0], [radius], [0]]),
-    #            np.array([[0], [0], [0], [0], [radius]]),
-    #        ]
-    #     Z['g']=self.get_unique_vectors(b)
-    #     return Z
 
     """
         Get Box Hull
