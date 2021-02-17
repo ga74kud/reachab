@@ -12,7 +12,7 @@ import argparse
 import logging
 def run_it(params):
     #test_me()
-    for wlt in range(0, 1):
+    for wlt in range(0, 2):
         Omega_0 = {'c': np.matrix([[wlt*80],
                                [0],
                                [10],
@@ -35,10 +35,7 @@ def run_it(params):
                          [0, 0, 0]
                          ])
          }
-        # zonoset=reach(Omega_0, U, params)
-        R, X, obj_reach, zonoset=reach_zonotype_without_box(Omega_0, U, **{"time_horizon": 2.2, "steps": 4, "visualization": "y", "face_color": "green"})
-        all_inside_points=get_sample_points_inside_hull(zonoset)
-        plot_all_inside_points(all_inside_points)
+        zonoset=reach(Omega_0, U, params)
         logging.info("Numbers in num_list are: {}".format(' '.join(map(str, zonoset))))
     show_all()
 

@@ -41,8 +41,8 @@ def check_points_inside(points, polygon_points):
     return inside_points
 
 def get_points_inside(polygon_points):
-    x = polygon_points[0, :]
-    y = polygon_points[1, :]
+    x = polygon_points[:, 0]
+    y = polygon_points[:, 1]
     xmin,xmax,ymin,ymax=np.min(x), np.max(x), np.min(y), np.max(y)
     x_lin, ylin=np.linspace(xmin, xmax, 10), np.linspace(ymin, ymax, 10)
     X, Y=np.meshgrid(x_lin, ylin)

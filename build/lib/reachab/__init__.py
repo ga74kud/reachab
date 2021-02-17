@@ -11,22 +11,6 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 from shapely.geometry import Polygon, Point
 import numpy as np
-from reachab.src.states_reachsets import *
-
-
-
-def points_inside_hull(zonoset):
-    all_inside_points=get_sample_points_inside_hull(zonoset)
-    return all_inside_points
-
-
-def plot_all_inside_points(all_inside_points):
-    for act_points in all_inside_points:
-        plt.scatter(act_points[:, 0], act_points[:, 1])
-
-
-
-
 import logging
 '''
     Test me function. A user should see if the program is installed and a simple plot is available 
@@ -35,8 +19,6 @@ def test_me():
     obj_reachability = rb.reachability()
     obj_reachability.test_function()
 
-
-
 '''
     Reachability Analysis. 
     Omega_0: Initial state set
@@ -44,6 +26,8 @@ def test_me():
     Params: Parameters
 '''
 def reach(Omega_0, U, params):
+    logger = logging.getLogger('my-logger')
+    logger.propagate = False
     ##################################
     ## REACHABILITY ANALYSIS PARAMS ##
     ##################################
@@ -64,31 +48,6 @@ def reach(Omega_0, U, params):
             obj_reach.obj_visual.filled_polygon(zonoset, params['face_color'], .2)
         erg.append(zonoset)
     #points_a=states_for_R(params, obj_reach, R)
-    return erg
-
-def reach_zonotype_without_box(Omega_0, U, **kwargs):
-    ##################################
-    ## REACHABILITY ANALYSIS PARAMS ##
-    ##################################
-    erg_zonoset=[]
-    ra_params = {
-        'T': kwargs["time_horizon"],
-        'N': kwargs["steps"],
-    }
-    obj_reach = rb.reachability(**ra_params)
-    R, X = obj_reach.approximate_reachable_set_without_box(Omega_0, U)
-    for act_zono in R:
-        zonoset = obj_reach.get_points_of_zonotype(act_zono)
-        if (kwargs['visualization'] == 'y'):
-            obj_reach.obj_visual.filled_polygon(zonoset, kwargs['face_color'], .2)
-        erg_zonoset.append(zonoset)
-    return R, X, obj_reach, erg_zonoset
-
-def get_zonotype_points(obj_reach, R):
-    erg = []
-    for act_zono in R:
-        zonoset = obj_reach.get_points_of_zonotype(act_zono)
-        erg.append(zonoset)
     return erg
 
 '''
