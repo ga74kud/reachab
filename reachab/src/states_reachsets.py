@@ -58,7 +58,7 @@ def check_points_inside_ND(points, polygon_points):
     return inside_points
 def get_points_inside_ND(act_points):
     all_extrema=[(np.min(act_points[:, i]), np.max(act_points[:, i])) for i in range(0, np.size(act_points, 1))]
-    all_linspaces=[np.linspace(i[0], i[1], 10) for i in all_extrema]
+    all_linspaces=[np.linspace(i[0], i[1], 5) for i in all_extrema]
     X, Y, VX, VY = np.meshgrid(*all_linspaces)
     X, Y, VX, VY = np.ravel(X), np.ravel(Y), np.ravel(VX), np.ravel(VY)
     meshgrid_points = np.transpose(np.vstack(([X, Y, VX, VY])))

@@ -29,10 +29,10 @@ def run_it(params):
                          [0],
                          [0],
                          ]),
-         'g': np.matrix([[1, 0, 1],
-                         [1, 1, 0],
-                         [0, 0, 0],
-                         [0, 0, 0]
+         'g': np.matrix([[1, 0],
+                         [0, 1],
+                         [0, 0],
+                         [0, 3]
                          ])
          }
         # zonoset=reach(Omega_0, U, params)
