@@ -21,8 +21,17 @@ def points_inside_hull(zonoset):
 
 
 def plot_all_inside_points(all_inside_points):
-    for act_points in all_inside_points:
-        plt.scatter(act_points[:, 0], act_points[:, 1])
+    colors=["red", "orange", "yellow", "cyan", "blue", "black"]
+    for idx, act_points in enumerate(all_inside_points):
+        for act_point in act_points:
+            if(idx<=len(colors)):
+                plt.arrow(act_point[0], act_point[1], 0.1*act_point[2], 0.1*act_point[3],
+                      fc=colors[idx], ec="black", alpha=.3, width=.1,
+                      head_width=.4, head_length=.63)
+            else:
+                plt.arrow(act_point[0], act_point[1], 0.1 * act_point[2], 0.1 * act_point[3],
+                          fc="red", ec="black", alpha=.3, width=.1,
+                          head_width=.4, head_length=.63)
 
 
 
