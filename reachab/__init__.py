@@ -59,7 +59,7 @@ def reach(Omega_0, U, params):
     elif (program[1] == params['box_function']):
         R, X = obj_reach.approximate_reachable_set_with_box(Omega_0, U)
     for act_zono in R:
-        zonoset = obj_reach.get_points_of_zonotype(act_zono)
+        zonoset, unique_vec = obj_reach.get_points_of_zonotype(act_zono)
         if (params['visualization'] == 'y'):
             obj_reach.obj_visual.filled_polygon(zonoset, params['face_color'], .2)
         erg.append(zonoset)
@@ -78,10 +78,10 @@ def reach_zonotype_without_box(Omega_0, U, **kwargs):
     obj_reach = rb.reachability(**ra_params)
     R, X = obj_reach.approximate_reachable_set_without_box(Omega_0, U)
     for act_zono in R:
-        zonoset = obj_reach.get_points_of_zonotype(act_zono)
+        zonoset, unique_vec = obj_reach.get_points_of_zonotype(act_zono)
         if (kwargs['visualization'] == 'y'):
             obj_reach.obj_visual.filled_polygon(zonoset, kwargs['face_color'], .2)
-        erg_zonoset.append(zonoset)
+        erg_zonoset.append(unique_vec)
     return R, X, obj_reach, erg_zonoset
 
 def get_zonotype_points(obj_reach, R):

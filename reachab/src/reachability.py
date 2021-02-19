@@ -122,7 +122,7 @@ class reachability(object):
             points = self.compute_convex_hull(unique_vec[:, 0], unique_vec[:, 1])
         except:
             None
-        return [points[:, 0], points[:, 1]]
+        return [points[:, 0], points[:, 1]], unique_vec
 
     """
         Compute the convex hull

@@ -30,6 +30,14 @@ def inside_polygon(points, x):
     lp = linprog(c, A_eq=A, b_eq=b)
     return lp.success
 
+def inside_polygon_ND(points, x):
+    n_points = np.size(points, 0)
+    c = np.zeros(n_points)
+    A = np.r_[points.T,np.ones((1,n_points))]
+    b = np.r_[x, np.ones(1)]
+    lp = linprog(c, A_eq=A, b_eq=b)
+    return lp.success
+
 def check_points_inside(points, polygon_points):
     inside_points=[]
     for wlt in range(0, np.size(points, 0)):
@@ -39,7 +47,24 @@ def check_points_inside(points, polygon_points):
             inside_points.append(act_point)
     inside_points=np.array(inside_points)
     return inside_points
-
+def check_points_inside_ND(points, polygon_points):
+    inside_points=[]
+    for wlt in range(0, np.size(points, 0)):
+        act_point=points[wlt, :]
+        bool_val=inside_polygon_ND(polygon_points, act_point)
+        if(bool_val):
+            inside_points.append(act_point)
+    inside_points=np.array(inside_points)
+    return inside_points
+def get_points_inside_ND(act_points):
+    all_extrema=[(np.min(act_points[:, i]), np.max(act_points[:, i])) for i in range(0, np.size(act_points, 1))]
+    all_linspaces=[np.linspace(i[0], i[1], 10) for i in all_extrema]
+    X, Y, VX, VY = np.meshgrid(*all_linspaces)
+    X, Y, VX, VY = np.ravel(X), np.ravel(Y), np.ravel(VX), np.ravel(VY)
+    meshgrid_points = np.transpose(np.vstack(([X, Y, VX, VY])))
+    meshgrid_points= np.unique(meshgrid_points, axis=0)
+    inside_points = check_points_inside_ND(meshgrid_points, act_points)
+    return inside_points
 def get_points_inside(polygon_points):
     x = polygon_points[:, 0]
     y = polygon_points[:, 1]
@@ -53,8 +78,9 @@ def get_points_inside(polygon_points):
 def get_sample_points_inside_hull(zonoset):
     all_inside_points=[]
     for act_points in zonoset:
-        points=np.transpose(np.vstack((act_points[0], act_points[1])))
-        inside_points=get_points_inside(points)
+        points=np.transpose(np.vstack((act_points[:, 0], act_points[:, 1])))
+        #inside_points=get_points_inside(points)
+        inside_points = get_points_inside_ND(act_points)
         all_inside_points.append(inside_points)
     return all_inside_points
 
