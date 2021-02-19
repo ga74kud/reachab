@@ -15,42 +15,62 @@ pip install reachab
 
 After installation with ```bash pip install reachab```, you could test the installation with ```reachab.test_me``` 
 or running the script:
-```python
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--box_function', '-box', type=str, help='choices: without_box, with_box',
-                        default='without_box', required=False)
-    parser.add_argument('--visualization', '-vis', type=str, help='y, n',
-                        default='y', required=False)
-    parser.add_argument('--time_horizon', '-T', type=float, help='value like: T=2.2', default=2.2, required=False)
-    parser.add_argument('--steps', '-N', type=int, help='value like N=4', default=6, required=False)
-    parser.add_argument('--debug', '-deb', type=str, help='(y,n)', default='n', required=False)
-    parser.add_argument('--window_x', '-wix', type=int, help='windowsize in x-direction for savgol_filter', default=101, required=False)
-    parser.add_argument('--window_y', '-wiy', type=int, help='windowsize in y-direction for savgol_filter', default=101, required=False)
-    parser.add_argument('--poly_x', '-pox', type=int, help='polygon order in x-direction for savgol_filter', default=2, required=False)
-    parser.add_argument('--poly_y', '-poy', type=int, help='polygon order in y-direction for savgol_filter', default=2, required=False)
-    parser.add_argument('--program', '-pro', type=str, help='a) only_reachability', default='only_reachability', required=False)
-    args = parser.parse_args()
-    params = vars(args)
-    params['PROJECT_ROOT']=definitions.get_project_root()
-    if (params['debug'] == 'y'):
-        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-    only_reachability(params)
-```
+
+[comment]: <> (```python)
+
+[comment]: <> (    parser = argparse.ArgumentParser&#40;&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--box_function', '-box', type=str, help='choices: without_box, with_box',)
+
+[comment]: <> (                        default='without_box', required=False&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--visualization', '-vis', type=str, help='y, n',)
+
+[comment]: <> (                        default='y', required=False&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--time_horizon', '-T', type=float, help='value like: T=2.2', default=2.2, required=False&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--steps', '-N', type=int, help='value like N=4', default=6, required=False&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--debug', '-deb', type=str, help='&#40;y,n&#41;', default='n', required=False&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--window_x', '-wix', type=int, help='windowsize in x-direction for savgol_filter', default=101, required=False&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--window_y', '-wiy', type=int, help='windowsize in y-direction for savgol_filter', default=101, required=False&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--poly_x', '-pox', type=int, help='polygon order in x-direction for savgol_filter', default=2, required=False&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--poly_y', '-poy', type=int, help='polygon order in y-direction for savgol_filter', default=2, required=False&#41;)
+
+[comment]: <> (    parser.add_argument&#40;'--program', '-pro', type=str, help='a&#41; only_reachability', default='only_reachability', required=False&#41;)
+
+[comment]: <> (    args = parser.parse_args&#40;&#41;)
+
+[comment]: <> (    params = vars&#40;args&#41;)
+
+[comment]: <> (    params['PROJECT_ROOT']=definitions.get_project_root&#40;&#41;)
+
+[comment]: <> (    if &#40;params['debug'] == 'y'&#41;:)
+
+[comment]: <> (        logging.basicConfig&#40;format='%&#40;levelname&#41;s:%&#40;message&#41;s', level=logging.DEBUG&#41;)
+
+[comment]: <> (    only_reachability&#40;params&#41;)
+
+[comment]: <> (```)
 
 ```python
-    def only_reachability(params):
-    Omega_0 = {'c': np.matrix([[0],
+    Omega_0 = {'c': np.matrix([[wlt*80],
                                [0],
                                [10],
                                [3]
                                ]),
-               'g': np.matrix([[1, -1, .5, .2],
-                               [1, 1, -.8, .3],
-                               [0, 0, .2, .3],
-                               [0, 0, .1, .5]
+               'g': np.matrix([[1, -1],
+                               [1, 1],
+                               [0, 0],
+                               [0, 0]
                                ])
                }
-    U = {'c': np.matrix([[0],
+        U = {'c': np.matrix([[0],
                          [0],
                          [0],
                          [0],
@@ -61,13 +81,15 @@ or running the script:
                          [0, 0, 0]
                          ])
          }
-    zonoset=reachab.reach(Omega_0, U, params)
-    show_all()
+        # zonoset=reach(Omega_0, U, params)
+        R, X, obj_reach, zonoset=reach_zonotype_without_box(Omega_0, U, **{"time_horizon": 2.2, "steps": 4, "visualization": "y", "face_color": "green"})
+        all_inside_points=get_sample_points_inside_hull(zonoset)
+        plot_all_inside_points(all_inside_points)
 ```
 
 ... should produce:
 
-![](/images/reachability.png)
+![](/images/reachab.png)
 
 
 # Citation
