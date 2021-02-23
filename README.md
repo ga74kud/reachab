@@ -16,48 +16,6 @@ pip install reachab
 After installation with ```bash pip install reachab```, you could test the installation with ```reachab.test_me``` 
 or running the script:
 
-[comment]: <> (```python)
-
-[comment]: <> (    parser = argparse.ArgumentParser&#40;&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--box_function', '-box', type=str, help='choices: without_box, with_box',)
-
-[comment]: <> (                        default='without_box', required=False&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--visualization', '-vis', type=str, help='y, n',)
-
-[comment]: <> (                        default='y', required=False&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--time_horizon', '-T', type=float, help='value like: T=2.2', default=2.2, required=False&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--steps', '-N', type=int, help='value like N=4', default=6, required=False&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--debug', '-deb', type=str, help='&#40;y,n&#41;', default='n', required=False&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--window_x', '-wix', type=int, help='windowsize in x-direction for savgol_filter', default=101, required=False&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--window_y', '-wiy', type=int, help='windowsize in y-direction for savgol_filter', default=101, required=False&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--poly_x', '-pox', type=int, help='polygon order in x-direction for savgol_filter', default=2, required=False&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--poly_y', '-poy', type=int, help='polygon order in y-direction for savgol_filter', default=2, required=False&#41;)
-
-[comment]: <> (    parser.add_argument&#40;'--program', '-pro', type=str, help='a&#41; only_reachability', default='only_reachability', required=False&#41;)
-
-[comment]: <> (    args = parser.parse_args&#40;&#41;)
-
-[comment]: <> (    params = vars&#40;args&#41;)
-
-[comment]: <> (    params['PROJECT_ROOT']=definitions.get_project_root&#40;&#41;)
-
-[comment]: <> (    if &#40;params['debug'] == 'y'&#41;:)
-
-[comment]: <> (        logging.basicConfig&#40;format='%&#40;levelname&#41;s:%&#40;message&#41;s', level=logging.DEBUG&#41;)
-
-[comment]: <> (    only_reachability&#40;params&#41;)
-
-[comment]: <> (```)
-
 ```python
 import reachab as rb
 import numpy as np
