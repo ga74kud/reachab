@@ -29,5 +29,6 @@ setup(name='reachab',
           "matplotlib",
           "argparse",
           "logging",
+          "shapely"
         ],
       zip_safe=False)
