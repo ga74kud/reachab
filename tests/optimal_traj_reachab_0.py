@@ -32,9 +32,19 @@ R, X, obj_reach, zonoset=rb.reach_zonotype_without_box(Omega_0, U, **{"time_hori
 plt.show()
 
 
-lin_solv=linprog(c=[1., 1., 1., 1.],
+lin_solv=linprog(c=[1., 1., -1., -1.],
     A_ub=[[1., 0.0, 0.0, 0.0], [-1., 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, -1.0, 0.0, 0.0], [0.0, 0.0, 1., 0.0], [0.0, 0.0, -1.0, 0.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, -1.0]],
-    b_ub=[1., 1., 1., 1., 4., -2., 4., -2.],
-    bounds=(None, None))
+    b_ub=[1., 1., 1., 1., 4., -2., 4., -2.])
 print(lin_solv)
 None
+import cdd
+mat = cdd.Matrix([[2,-1,-1,0],[0,1,0,0],[0,0,1,0]], number_type='fraction')
+mat.rep_type = cdd.RepType.INEQUALITY
+poly = cdd.Polyhedron(mat)
+print(poly)
+
+mat = cdd.Matrix([[1, 1, -1], [1, 1, 1], [1, -1, 1], [1, -1, -1]], number_type='fraction')
+mat.rep_type = cdd.RepType.GENERATOR
+poly = cdd.Polyhedron(mat)
+print(poly)
+print(poly.get_inequalities())
