@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import reachab as rb
 from scipy.optimize import linprog
-
-
+from scipy import signal
+from scipy.linalg import block_diag
 
 Omega_0 = {'c': np.matrix([[0],
                                [0],
@@ -31,9 +31,23 @@ R, X, obj_reach, zonoset=rb.reach_zonotype_without_box(Omega_0, U, **{"time_hori
 
 plt.show()
 
-
-lin_solv=linprog(c=[1., 1., -1., -1.],
-    A_ub=[[1., 0.0, 0.0, 0.0], [-1., 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, -1.0, 0.0, 0.0], [0.0, 0.0, 1., 0.0], [0.0, 0.0, -1.0, 0.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, -1.0]],
+a = np.array([[0, 0, 1, 0], [0, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0]])
+b = np.array([[0, 0], [0, 0], [1, 0], [0, 1]])
+c = np.array([[1, 0, 0, 0], [0, 1, 0, 0]])
+d = np.array([[0, 0], [0, 0]])
+cont_sys=signal.StateSpace(a, b, c, d)
+disc_sys=cont_sys.to_discrete(0.1)
+rt=block_diag(disc_sys.A, disc_sys.B, disc_sys.A, disc_sys.B)
+lin_solv=linprog(c=[-1., -1., 1, 1, 1, 1,-1., -1., 1, 1, 1, 1,],
+    A_ub=[[1., 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          [-1., 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
+          ],
     b_ub=[1., 1., 1., 1., 4., -2., 4., -2.])
 print(lin_solv)
 None
