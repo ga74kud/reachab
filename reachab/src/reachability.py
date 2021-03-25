@@ -11,7 +11,6 @@ from reachab.util.visualizer import *
 import numpy as np
 import scipy.spatial
 from scipy import signal
-import logging
 
 """
     Class for reachability analysis
@@ -43,11 +42,7 @@ class reachability(object):
         D = np.zeros((4, 2))
         self.system_dynamics(A, B, C, D)
 
-    """
-        Initial step to start logging
-    """
-    def start_logging(self):
-        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+
 
     """
         System dynamics
@@ -172,8 +167,6 @@ class reachability(object):
         all_R.append(Omega_0)
         all_X.append(Omega_0)
         #self.params['N']
-        logging.info("number of generators Omega_0: " + str(np.size(Omega_0['g'], 1)))
-        logging.info("number of generators U: " + str(np.size(U['g'], 1)))
         # 1. step
         X_0=Omega_0
         X_i=X_0
@@ -193,23 +186,17 @@ class reachability(object):
                                    ])
                    }
         S_i=S_0
-        logging.info("number of generators S_0: " + str(np.size(S_0['g'], 1)))
         # 4. step
         for i in range(0, self.params['N']):
-            logging.info("cycle i: "+str(i))
             # 5. step
             X_i = self.multiplication_on_zonotype(self.Phi, X_i)
             all_X.append(X_i)
-            logging.info("number of generators X_i: "+str(np.size(X_i['g'],1)))
             # 6. step
             S_i=self.minkowski_zonotypes(S_i, V_i)
-            logging.info("number of generators S_i: "+str(np.size(S_i['g'],1)))
             # 7. step
             V_i = self.multiplication_on_zonotype(self.Phi, V_i)
-            logging.info("number of generators V_i: "+str(np.size(V_i['g'],1)))
             # 8. step
             Omega_i=self.minkowski_zonotypes(X_i, S_i)
-            logging.info("number of generators Omega_i: "+str(np.size(Omega_i['g'],1)))
             all_R.append(Omega_i)
         return all_R, all_X
 
@@ -229,8 +216,6 @@ class reachability(object):
         all_X.append(Omega_0)
 
         #self.params['N']
-        logging.info("number of generators Omega_0: " + str(np.size(Omega_0['g'], 1)))
-        logging.info("number of generators U: " + str(np.size(U['g'], 1)))
         # 1. step
         X_0=Omega_0
         X_i=X_0
@@ -250,25 +235,19 @@ class reachability(object):
                                    ])
                    }
         S_i=S_0
-        logging.info("number of generators S_0: " + str(np.size(S_0['g'], 1)))
         # 4. step
         for i in range(0, self.params['N']):
-            logging.info("cycle i: "+str(i))
             # 5. step
             X_i = self.multiplication_on_zonotype(self.Phi, X_i)
             all_X.append(X_i)
-            logging.info("number of generators X_i: "+str(np.size(X_i['g'],1)))
             # 6. step
             V_i_box = self.get_box_hull(V_i)
             S_i=self.minkowski_zonotypes(S_i, V_i_box)
-            logging.info("number of generators S_i: "+str(np.size(S_i['g'],1)))
             # 7. step
             V_i = self.multiplication_on_zonotype(self.Phi, V_i)
-            logging.info("number of generators V_i: "+str(np.size(V_i['g'],1)))
             # 8. step
             Omega_i=self.minkowski_zonotypes(X_i, S_i)
             Omega_i=self.get_box_hull(Omega_i)
-            logging.info("number of generators Omega_i: "+str(np.size(Omega_i['g'],1)))
             all_R.append(Omega_i)
         return all_R, all_X
 
@@ -372,5 +351,4 @@ class reachability(object):
 
 if __name__ == '__main__':
     obj_reach = reachability(**{'T':3, 'N':5})
-    obj_reach.start_logging()
     obj_reach.test_function()

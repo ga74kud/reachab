@@ -36,7 +36,6 @@ def plot_all_inside_points(all_inside_points):
 
 
 
-import logging
 '''
     Test me function. A user should see if the program is installed and a simple plot is available 
 '''

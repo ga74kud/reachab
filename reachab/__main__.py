@@ -9,7 +9,6 @@
 from __init__ import *
 import numpy as np
 import argparse
-import logging
 def run_it(params):
     #test_me()
     for wlt in range(0, 1):
@@ -39,7 +38,23 @@ def run_it(params):
         R, X, obj_reach, zonoset=reach_zonotype_without_box(Omega_0, U, **{"time_horizon": 2.2, "steps": 4, "visualization": "y", "face_color": "green"})
         all_inside_points=points_inside_hull(zonoset)
         plot_all_inside_points(all_inside_points)
-        logging.info("Numbers in num_list are: {}".format(' '.join(map(str, zonoset))))
+        # U = {'c': np.matrix([[0],
+        #                      [0],
+        #                      [0],
+        #                      [0],
+        #                      ]),
+        #      'g': np.matrix([[0, 0],
+        #                      [0, -.3],
+        #                      [0, 0],
+        #                      [0, -.3]
+        #                      ])
+        #      }
+        # Omega_0=R[-1]
+        # R, X, obj_reach, zonoset = reach_zonotype_without_box(Omega_0, U,
+        #                                                       **{"time_horizon": 2.2, "steps": 2, "visualization": "y",
+        #                                                          "face_color": "green"})
+        # all_inside_points = points_inside_hull(zonoset)
+        # plot_all_inside_points(all_inside_points)
     show_all()
 
 
@@ -60,8 +75,6 @@ def main():
                         required=False)
     args = parser.parse_args()
     params = vars(args)
-    if(params['debug']=='y'):
-        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     run_it(params)
 if __name__ == '__main__':
     main()
