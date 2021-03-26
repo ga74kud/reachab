@@ -13,6 +13,8 @@ class coordinate_system(object):
         ax1.arrow(self.coord[0,2], self.coord[1, 2], self.coord[0, 1], self.coord[1, 1], color=kwargs["color"])
     def transform(self, mat):
         self.coord=np.dot(self.coord, mat)
+    def get_information(self):
+        return {"coord": self.coord}
 class control_over_manifold(object):
     def __init__(self, **kwargs):
         self.m = GEKKO()  # initialize gekko
@@ -51,7 +53,7 @@ a.set_coord(np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
 a.visualize(**{"color": "green"})
 a.transform(transf_mat)
 a.visualize(**{"color": "orange"})
-
+coord=a.get_information()
 abc=control_over_manifold()
 abc.control()
 rt=abc.get_information()
