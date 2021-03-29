@@ -61,10 +61,10 @@ class control_over_manifold(object):
         self.m.solve(disp=False)  # solve
     def get_information(self):
         return {"state": self.state, "time": self.m.time, "cost": self.cost}
-
-angle_b=np.radians(30)
-angle_c=np.radians(-10)
-angle_d=np.radians(50)
+b, c, d=30, -10, 50
+angle_b=np.radians(b)
+angle_c=np.radians(c)
+angle_d=np.radians(d)
 transf_mat_b=np.array([[np.cos(angle_b), -np.sin(angle_b), 2], [np.sin(angle_b), np.cos(angle_b), 1], [0, 0, 1]])
 transf_mat_c=np.array([[np.cos(angle_c), -np.sin(angle_c), 1.3], [np.sin(angle_c), np.cos(angle_c), 3.5], [0, 0, 1]])
 transf_mat_d=np.array([[np.cos(angle_d), -np.sin(angle_d), 4], [np.sin(angle_d), np.cos(angle_d), 3], [0, 0, 1]])
@@ -92,33 +92,39 @@ coord_d=coord_d.transform(transf_mat_d)
 coord_d.visualize(**{"color": [.2, 0, 1]})
 
 
-abc=control_over_manifold()
-abc.set_initial_state([0, 0, .3, -.5])
-abc.control([2, 0.3])
-rt=abc.get_information()
-v,vx,vy=abc.get_velocity()
+a_obj=control_over_manifold()
+b_obj=control_over_manifold()
+
+a_obj.set_initial_state([0, 0, .3, -.5])
+a_obj.control([2, 0.3])
+rt=a_obj.get_information()
+v_a,vx_a,vy_a=a_obj.get_velocity()
 time=rt["time"]
 cost=rt["cost"].value
-traj=np.vstack((rt["state"]["x1_0"].value, rt["state"]["x1_1"].value, np.ones((1, len(rt["state"]["x1_1"].value))), vx, vy, np.ones((1, len(rt["state"]["x1_1"].value)))))
+traj=np.vstack((rt["state"]["x1_0"].value, rt["state"]["x1_1"].value, np.ones((1, len(rt["state"]["x1_1"].value))), vx_a, vy_a, np.ones((1, len(rt["state"]["x1_1"].value)))))
 
 
 
 
-end_pos_new_coord=np.dot(inv_transf_mat_b, traj[0:3, -1])
+end_pos_new_coord_b=np.dot(inv_transf_mat_b, traj[0:3, -1])
 last_vel=traj[3:, -1]
-end_vel_new_coord=np.dot(no_rot_inv_transf_mat_b, traj[3:, -1])
+end_vel_new_coord_b=np.dot(no_rot_inv_transf_mat_b, traj[3:, -1])
 
-new_state=np.vstack((end_pos_new_coord[0], end_pos_new_coord[1], end_vel_new_coord[0], end_vel_new_coord[1]))
+new_state=np.vstack((end_pos_new_coord_b[0], end_pos_new_coord_b[1], end_vel_new_coord_b[0], end_vel_new_coord_b[1]))
 
-abc=control_over_manifold()
-abc.set_initial_state(new_state)
-abc.control([.3,2.3])
-rt=abc.get_information()
-traj_b=np.vstack((rt["state"]["x1_0"].value, rt["state"]["x1_1"].value, np.ones((1, len(rt["state"]["x1_1"].value))), vx, vy, np.ones((1, len(rt["state"]["x1_1"].value)))))
-end_pos_new_coord=np.dot(transf_mat_b, traj_b[0:3, :])
-time_b=rt["time"]+time[-1]
-cost_b=rt["cost"].value
-vb,vx,vy=abc.get_velocity()
+
+b_obj.set_initial_state(new_state)
+b_obj.control([.3,2.3])
+rt_b=b_obj.get_information()
+v_b,vx_b,vy_b=b_obj.get_velocity()
+traj_b=np.vstack((rt_b["state"]["x1_0"].value, rt_b["state"]["x1_1"].value, np.ones((1, len(rt_b["state"]["x1_1"].value))), vx_b, vy_b, np.ones((1, len(rt["state"]["x1_1"].value)))))
+end_pos_new_coord_b=np.dot(transf_mat_b, traj_b[0:3, :])
+time_b=rt_b["time"]+time[-1]
+cost_b=rt_b["cost"].value
+
+
+
+
 
 
 
@@ -128,7 +134,7 @@ vb,vx,vy=abc.get_velocity()
 ### Visualization ###
 #####################
 ax1.plot(traj[0, :], traj[1, :],'-',label="position ref 1", color="blue", linewidth=2.3)
-ax1.plot(end_pos_new_coord[0, :], end_pos_new_coord[1, :],'-',label="position ref 2", color="cyan", linewidth=2.3)
+ax1.plot(end_pos_new_coord_b[0, :], end_pos_new_coord_b[1, :],'-',label="position ref 2", color="cyan", linewidth=2.3)
 
 #ax1.legend(loc='lower right')
 ax1.set_xlabel('x')
@@ -138,9 +144,11 @@ ax1.set(xlim=(-.3, 8.4), ylim=(-1.3, 5.4))
 ax1.set_aspect('equal', adjustable='box')
 ax3 = ax2.twinx()
 ax2.plot(time, cost,'k-',label="cost ref1", color="red", alpha=.7)
-ax3.plot(time, v,'k-',label="velocity ref1", color="blue", alpha=.7)
+ax3.plot(time, v_a,'k-',label="v ref1", color="blue", alpha=.7)
+
 ax2.plot(time_b, cost_b,'k-',label="cost ref2", color="orange", alpha=.7)
-ax3.plot(time_b, vb,'k-',label="velocity ref2", color="cyan", alpha=.7)
+ax3.plot(time_b, v_b,'k-',label="v ref2", color="cyan", alpha=.7)
+
 ax2.legend(loc='upper left')
 ax3.legend(loc='lower right')
 ax2.set_xlabel('t')
